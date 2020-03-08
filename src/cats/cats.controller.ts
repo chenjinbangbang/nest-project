@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Post, HttpCode, Header, Param, Res, HttpStatus, Body, Response, HttpException, UsePipes, ParseIntPipe, ParseUUIDPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Post, HttpCode, Header, Param, Res, HttpStatus, Body, Response, HttpException, UsePipes, ParseIntPipe, ParseUUIDPipe, UseGuards, SetMetadata } from '@nestjs/common';
 // import { Request, Response } from 'express';
 // import { of } from 'rxjs';
 import { CreateCatDto } from './dto/create-cat.dto';
@@ -7,8 +7,8 @@ import { Cat } from './interfaces/cat.interface';
 import { RolesGuard } from 'src/roles.guard';
 
 @Controller('cats')
-// @UseGuards(RolesGuard) // @UseGuards()装饰器：设置一个控制范围的守卫
-@UseGuards(new RolesGuard()) // 与管道和异常过滤器一样，我们也可以传递一个实例
+// @UseGuards(RolesGuard) // 绑定守卫：@UseGuards()装饰器：设置一个控制范围的守卫
+// @UseGuards(new RolesGuard()) // 与管道和异常过滤器一样，我们也可以传递一个实例
 export class CatsController {
   constructor(private readonly catsService: CatsService) { }
 
@@ -77,6 +77,13 @@ export class CatsController {
   @Get('list')
   async findAll(): Promise<Cat[]> {
     return this.catsService.findAll();
+  }
+
+  // 守卫
+  @Post('guard')
+  @SetMetadata('roles', ['admin']) // 自定义元数据，将定制元数据附加到路由处理程序的能力。这些元数据提供了我们所缺少的角色数据，而守卫需要这些数据来做出决策
+  async create2(@Body() createCatDto: CreateCatDto) {
+    this.catsService.create(createCatDto);
   }
 
 

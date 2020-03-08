@@ -8,7 +8,8 @@ import { logger } from './common/middleware/logger.middleware';
 import { CatsController } from './cats/cats.controller';
 // import { CatsService } from './cats/cats.service';
 import { CatsModule } from './cats/cats.module';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_PIPE, APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './roles.guard';
 
 // @Module()装饰器：将元数据附加到模块类
 @Module({
@@ -19,10 +20,16 @@ import { APP_PIPE } from '@nestjs/core';
   providers: [
     AppService,
 
-    // 从任何模块外部注册的全局管道无法注入依赖，因为它们不属于任何模块。为了解决这个问题，可以使用以下构造直接为任何模块设置管道
+    // 在依赖注入方面，从任何模块外部注册的全局管道无法注入依赖，因为它们不属于任何模块。为了解决这个问题，可以使用以下构造直接为任何模块设置管道
     {
       provide: APP_PIPE,
       useClass: ValidationPipe
+    },
+
+    // 在依赖注入方面，从任何模块外部注册的全局守卫不能插入依赖项，因为它们不属于任何模块。为了解决这个问题，可以使用以下构造直接从任何模块设置一个守卫
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
     }
   ],
 
