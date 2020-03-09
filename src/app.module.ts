@@ -10,10 +10,12 @@ import { CatsController } from './cats/cats.controller';
 import { CatsModule } from './cats/cats.module';
 import { APP_PIPE, APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
+import { UserController } from './user/user.controller';
+import { UserModule } from './user/user.module';
 
 // @Module()装饰器：将元数据附加到模块类
 @Module({
-  imports: [CatsModule], // 导入模块的列表，这些模块导出了此模块中所需提供者
+  imports: [CatsModule, UserModule], // 导入模块的列表，这些模块导出了此模块中所需提供者
   controllers: [AppController], // 必须创建的一组控制器
 
   // 由nest注入器实例化的提供者，并且可以至少在整个模块中共享

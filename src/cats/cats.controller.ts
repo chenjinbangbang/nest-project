@@ -5,6 +5,7 @@ import { CreateCatDto } from './dto/create-cat.dto';
 import { CatsService } from './cats.service';
 import { Cat } from './interfaces/cat.interface';
 import { RolesGuard } from 'src/roles.guard';
+import { User } from 'src/user.decorator';
 
 @Controller('cats')
 // @UseGuards(RolesGuard) // 绑定守卫：@UseGuards()装饰器：设置一个控制范围的守卫
@@ -33,10 +34,10 @@ export class CatsController {
   // async findOne(@Param('id', new ParseIntPipe()) id) {
   //   return await this.catsService.findOne(id);
   // }
-  @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe()) id) {
-    return await this.catsService.findOne(id);
-  }
+  // @Get(':id')
+  // async findOne(@Param('id', new ParseUUIDPipe()) id) {
+  //   return await this.catsService.findOne(id);
+  // }
 
   @Get()
   getUserB(@Req() req) {
@@ -86,7 +87,12 @@ export class CatsController {
     this.catsService.create(createCatDto);
   }
 
-
+  // 装饰器
+  @Get('decorator')
+  async findOne1(@User('firstName') firstName: string) {
+    console.log(firstName);
+    return firstName;
+  }
 
   // @Post()
   // async create(@Body() createCatDto: CreateCatDto) {
