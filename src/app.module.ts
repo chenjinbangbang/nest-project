@@ -12,10 +12,30 @@ import { APP_PIPE, APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+
+// 连接mysql数据库
+import { TypeOrmModule } from '@nestjs/typeorm'; // 使用TypeORM是因为它是TypeScript中最成熟的对象关系映射器（ORM）
+import { Connection } from 'typeorm';
 
 // @Module()装饰器：将元数据附加到模块类
 @Module({
-  imports: [CatsModule, UserModule], // 导入模块的列表，这些模块导出了此模块中所需提供者
+  imports: [
+    // forRoot()方法接受与来自TypeORM包的createConnection()相同的配置对象
+    TypeOrmModule.forRoot(
+      {
+        type: 'mysql', // 数据库类型
+        host: 'localhost', // 数据库ip地址
+        port: 3306, // 端口
+        username: 'root', // 登录名
+        password: 'root', // 密码
+        database: 'test', // 数据库名称
+        entities: [__dirname + '/**/*.entity{.ts,.js}'], // 扫描本项目中.entity.ts或者.entity.js的文件，静态全局路径不适用于webpack热重载
+        // entities: [Photo],
+        synchronize: true // 定义数据库表结构与实体类字段同步（这里一旦数据库少了字段就会自动加入，根据需要来使用）
+      }
+    ),
+    CatsModule, UserModule, AuthModule], // 导入模块的列表，这些模块导出了此模块中所需提供者
   controllers: [AppController], // 必须创建的一组控制器
 
   // 由nest注入器实例化的提供者，并且可以至少在整个模块中共享
@@ -39,6 +59,9 @@ import { UserModule } from './user/user.module';
 })
 
 export class AppModule implements NestModule {
+  // 建立连接。一旦完成，TypeORM连接和EntityManager对象就可以在整个项目中注入（不需要导入任何模块）
+  constructor(private readonly connection: Connection) { }
+
   // 中间件不能再@Module()装饰器中列出，我们必须使用模块类的configure()方法来设置它们。包含中间件的模块必须实现NestModule接口。我们将LoggerMiddleware设置在ApplicationModule层上
   configure(consumer: MiddlewareConsumer) { // MiddlewareConsumer：是一个帮助类，它提供了几种内置方法来管理中间件
     consumer
