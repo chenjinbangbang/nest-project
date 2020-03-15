@@ -8,7 +8,7 @@ import { logger } from './common/middleware/logger.middleware';
 import { CatsController } from './cats/cats.controller';
 // import { CatsService } from './cats/cats.service';
 import { CatsModule } from './cats/cats.module';
-import { APP_PIPE, APP_GUARD } from '@nestjs/core';
+import { APP_PIPE, APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
@@ -17,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
 // 连接mysql数据库
 import { TypeOrmModule } from '@nestjs/typeorm'; // 使用TypeORM是因为它是TypeScript中最成熟的对象关系映射器（ORM）
 import { Connection } from 'typeorm';
+import { HttpExceptionFilter } from './http-exception.filter';
 
 // @Module()装饰器：将元数据附加到模块类
 @Module({
@@ -52,6 +53,12 @@ import { Connection } from 'typeorm';
     {
       provide: APP_GUARD,
       useClass: RolesGuard
+    },
+
+    // 全局过滤器用于整个应用程序、每个控制器和每个路由处理程序。就依赖注入而言，从任何模块外部注册的全局过滤器（使用上面示例中的 useGlobalFilters()）不能注入依赖，因为它们不属于任何模块。为了解决这个问题，你可以注册一个全局范围的过滤器直接为任何模块设置过滤器：
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter
     }
   ],
 

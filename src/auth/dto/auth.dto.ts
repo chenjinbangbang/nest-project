@@ -11,14 +11,14 @@ export class AuthDto {
     // type: Number,
     description: '用户编号'
   })
-  @IsInt()
+  @IsInt({ message: '用户编号必须为数字类型' })
   readonly id: number;
 
   @ApiProperty({
     // type: String,
     description: '用户姓名'
   })
-  @IsString()
+  @IsString({ message: '用户姓名必须为字符串类型' })
   @Length(0, 10, {
     message: '名字不能超过10个字符' // 错误信息
   })

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Auth } from './auth.entity';
+import { Auth } from 'src/entity/auth.entity';
 import { Repository } from 'typeorm';
 
 
@@ -19,6 +19,7 @@ export class AuthService {
   // 查询所有数据
   findAll() {
     return this.authRepo.find(); // find()方法查询所有数据
+    // return this.authRepo.findAndCount(); // find()方法查询所有数据和总数
   }
 
   // 按条件查询数据
@@ -41,9 +42,21 @@ export class AuthService {
 
   // 根据某个字段查询数据
   async getAuthById(id) {
-    // return await this.authRepo.findOne(id); // 以id搜寻，没找到return null
-    return await this.authRepo.findOneOrFail(id); // 以id搜寻，没找到会丢出例外
+    console.log('根据某个字段查询数据', id);
+    return await this.authRepo.findOne(id); // 以id搜寻，没找到return null
+    // return await this.authRepo.findOneOrFail(id); // 以id搜寻，没找到会丢出例外
+    // return await this.authRepo.findOne({ id, firstName: 'jin' });
   }
+
+  // 检查是否存在某个数据
+  // async findOne(id) {
+  //   let result = await this.authRepo.findOne(id);
+  //   if (result) {
+  //     return result;
+  //   } else {
+  //     return { success: false, msg: '未找到该条数据', data: null };
+  //   }
+  // }
 
   // 新增数据
   async create(data) {
@@ -57,12 +70,18 @@ export class AuthService {
 
   // 更新数据
   async update(data) {
-    await this.authRepo.update(data.id, data); // 用data里的值更新到资料库
-    return '更新数据成功';
+
+    // 检查是否存在该数据
+    let result = await this.authRepo.findOne(data.id);
+    await this.authRepo.save(data);
+    // await this.authRepo.update(data.id, data); // 用data里的值更新到资料库
+    return { success: true, msg: '更新数据成功', data: null };
   }
 
   // 删除数据
   async delete(id) {
+
+
     await this.authRepo.delete(id); // delete之需要传入id
     return '删除数据成功'
   }

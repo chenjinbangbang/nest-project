@@ -1,9 +1,12 @@
-import { Controller, Get, Param, Req, Post, Body, Put, Delete, ParseIntPipe, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, Req, Post, Body, Put, Delete, ParseIntPipe, UsePipes, ValidationPipe, HttpException, HttpStatus, UseFilters, ForbiddenException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Auth } from './auth.entity';
+import { Auth } from 'src/entity/auth.entity';
 import { AuthDto } from './dto/auth.dto';
+import { HttpExceptionFilter } from 'src/http-exception.filter';
+// import { JoiValidationPipe } from './pipe/joi-validatePipe';
 
 @Controller('auth')
+// @UseFilters(HttpExceptionFilter) // 异常过滤器。将过滤器设置成控制器作用域
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
@@ -34,6 +37,8 @@ export class AuthController {
 
   // 新增数据
   @Post()
+  // @UsePipes(new JoiValidationPipe())
+  // @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
   async create(@Body() body) {
     console.log(body);
     return await this.authService.create(body);
@@ -41,10 +46,17 @@ export class AuthController {
 
   // 更新数据
   @Put()
-  // @UsePipes(ValidationPipe)
+  // @UsePipes(new ValidationPipe({ transform: true }))
+  // @UsePipes(new JoiValidationPipe())
+  // @UseFilters(HttpExceptionFilter) // 异常过滤器
   async update(@Body() body: AuthDto) { //  SwaggerModule在路由处理程序中查找所有使用的@Body()，@Query()和@Param()装饰器来生产API文档。该模块利用反射创建相应的模型定义
-    console.log(body);
+
+    // console.log(body);
     return await this.authService.update(body);
+
+    // throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    // throw new HttpException({ status: HttpStatus.FORBIDDEN, error: 'This is a custom message' }, 403);
+    // throw new ForbiddenException();
   }
 
   @Delete(':id')
