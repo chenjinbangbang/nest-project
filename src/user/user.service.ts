@@ -35,7 +35,6 @@ export class UserService {
       // .leftJoinAndMapOne('user.profilePhoto', 'user.photos', 'photo') // 连接和映射功能（就是photos改名为profilePhoto）
       .leftJoinAndMapMany('user.profilePhoto', 'user.photos', 'photo')
 
-
       // .where('user.name = :name', data)
       // .getOne();
       // .getMany();
@@ -43,5 +42,12 @@ export class UserService {
 
       .printSql() // 该查询将返回用户，并将使用的sql语句打印到控制台
       .getMany();
+  }
+
+  b(data) {
+    return this.userRepo.createQueryBuilder('user')
+      .select('sum(user.photosCount)', 'sum')
+      .where('user.id = :id', { id: 1 })
+      .getRawOne(); // 获取原始结果
   }
 }

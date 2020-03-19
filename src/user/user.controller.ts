@@ -26,7 +26,13 @@ export class UserController {
   @Post()
   @ApiBody({ type: UserA })
   async a(@Body() body: UserA) {
-    return await this.userService.a(body)
+    return await this.userService.a(body);
+  }
+
+  @Post()
+  @ApiBody({ type: UserA })
+  async b(@Body() body: UserA) {
+    return await this.userService.b(body);
   }
 
   // @Post()
