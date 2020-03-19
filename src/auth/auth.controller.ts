@@ -3,7 +3,17 @@ import { AuthService } from './auth.service';
 import { Auth } from 'src/entity/auth.entity';
 import { AuthDto } from './dto/auth.dto';
 import { HttpExceptionFilter } from 'src/http-exception.filter';
+import { ApiBody, ApiProperty } from '@nestjs/swagger';
+import { IsInt } from 'class-validator';
 // import { JoiValidationPipe } from './pipe/joi-validatePipe';
+
+class AuthDto1 {
+  @ApiProperty({
+    description: '编号'
+  })
+  @IsInt()
+  readonly id: number;
+}
 
 @Controller('auth')
 // @UseFilters(HttpExceptionFilter) // 异常过滤器。将过滤器设置成控制器作用域
@@ -17,9 +27,11 @@ export class AuthController {
   }
 
   // 查询所有数据
-  @Get('list')
-  findAll(): Promise<Auth[]> {
-    return this.authService.findAll();
+  @Post('list')
+  @ApiBody({ type: AuthDto1 })
+  // findAll(@Body() body): Promise<Auth[]> {
+  findAll(@Body() body) {
+    return this.authService.findAll(body)
   }
 
   // 按条件查询数据

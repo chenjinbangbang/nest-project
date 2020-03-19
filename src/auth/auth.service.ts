@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Auth } from 'src/entity/auth.entity';
 import { Repository } from 'typeorm';
 
-
 @Injectable()
 export class AuthService {
   constructor(@InjectRepository(Auth) private readonly authRepo: Repository<Auth>) { }
@@ -17,8 +16,69 @@ export class AuthService {
   }
 
   // 查询所有数据
-  findAll() {
-    return this.authRepo.find(); // find()方法查询所有数据
+  findAll(data) {
+    console.log(data)
+
+    // 使用连接（有问题）
+    // return this.authRepo.createQueryBuilder()
+    //   .select('auth')
+    //   .from(Auth, 'auth')
+    //   .where('auth.id = :id', data)
+    //   // .getOne();
+    //   .getMany();
+
+    // 使用实体管理器（有问题）
+    // return this.authRepo.createQueryBuilder(Auth, 'auth')
+    //   .where('auth.id = :id', data)
+    //   .getOne();
+
+    // 使用存储库
+    // return this.authRepo.createQueryBuilder('auth')
+    //   .select(['auth.id', 'auth.username'])
+    //   .where('id = :id', data)
+    //   .getMany();
+    // .getOne();
+
+    // 执行select查询（有问题）
+    // return this.authRepo.createQueryBuilder()
+    //   .select('auth.id')
+    //   .from(Auth, 'auth')
+    //   .where('auth.id = :id', data)
+    //   .getOne();
+
+    // 执行insert查询
+    // return this.authRepo.createQueryBuilder()
+    //   .insert()
+    //   .into(Auth)
+    //   .values({ name: '陈陈', age: 100, sex: 1, username: '陈先生' })
+    //   .execute();
+
+    // 执行update查询
+    // return this.authRepo.createQueryBuilder()
+    //   // .update(Auth)
+    //   .update('auth')
+    //   .set({ age: 30 })
+    //   .where('id = :id', data)
+    //   .execute()
+
+    // 执行delete查询
+    // return this.authRepo.createQueryBuilder()
+    //   .delete()
+    //   .from(Auth)
+    //   .where('id = :id', data)
+    //   .execute();
+
+    // 获取原始数据
+    // return this.authRepo.createQueryBuilder('auth')
+    //   .select('sum(auth.sex)', 'sum')
+    //   // .where('auth.id = :id', data)
+    //   .getRawOne();
+    return this.authRepo.createQueryBuilder('auth')
+      .select('auth.id')
+      .addSelect('sum(auth.age)', 'sum')
+      .getRawMany();
+
+    // return this.authRepo.find(data); // find()方法查询所有数据
     // return this.authRepo.findAndCount(); // find()方法查询所有数据和总数
   }
 
@@ -29,7 +89,7 @@ export class AuthService {
     // query查询
     return this.authRepo.createQueryBuilder('a') // auth为表名
       // .leftJoinAndSelect('auth.roles', 'r') // 指定join auth的roles关联属性，并指定别名为r，并设定搜寻条件
-      .where('name like :name', { name: `%${name}%` }) // where条件
+      .where('name like :name', { name: `%${name}%` }) // where条件。使用这种写法可防止SQL注入
       // .andWhere('')
       .orderBy('age', 'DESC') // DESC降序排序，ASC升序
       // .addOrderBy('age', 'DESC')
@@ -37,7 +97,7 @@ export class AuthService {
       .take(2) // 分页-一页的条数
       .getManyAndCount(); // 回传record并count数量
     // .getMany(); // 回传多笔资料
-    // .getSql() // 回传上面API所组出的Raw SQL，debug用
+    // .getSql() // 回传上面API所组出的Raw SQL，debug用（这个不存在）
   }
 
   // 根据某个字段查询数据

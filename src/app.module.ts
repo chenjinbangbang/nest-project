@@ -26,10 +26,10 @@ import { HttpExceptionFilter } from './http-exception.filter';
     TypeOrmModule.forRoot(
       {
         type: 'mysql', // 数据库类型
-        host: 'localhost', // 数据库ip地址
+        host: '47.104.194.187', // 数据库ip地址
         port: 3306, // 端口
         username: 'root', // 登录名
-        password: 'root', // 密码
+        password: 'Achenjinbang_15915155079', // 密码
         database: 'test', // 数据库名称
         entities: [__dirname + '/**/*.entity{.ts,.js}'], // 扫描本项目中.entity.ts或者.entity.js的文件，静态全局路径不适用于webpack热重载
         // entities: [Photo],
