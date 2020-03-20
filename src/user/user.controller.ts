@@ -29,10 +29,22 @@ export class UserController {
     return await this.userService.a(body);
   }
 
-  @Post()
+  @Post('b')
   @ApiBody({ type: UserA })
   async b(@Body() body: UserA) {
     return await this.userService.b(body);
+  }
+
+  @Post('c')
+  @ApiBody({ type: UserA })
+  async c(@Body() body: UserA) {
+    return await this.userService.c(body);
+  }
+
+  @Post('d')
+  @ApiBody({ type: UserA })
+  async d(@Body() body: UserA) {
+    return await this.userService.d(body);
   }
 
   // @Post()
