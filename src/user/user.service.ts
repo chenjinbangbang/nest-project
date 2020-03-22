@@ -4,6 +4,7 @@ import { User } from 'src/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getManager } from 'typeorm';
 import { Photo } from 'src/entity/photo.entity';
+import { removeRawMany } from 'src/common/global';
 
 // 业务类
 @Injectable()
@@ -46,27 +47,55 @@ export class UserService {
       .getMany();
   }
 
-  b(data) {
-    return this.userRepo.createQueryBuilder('user')
+  async b(data) {
+    let res = await this.userRepo.createQueryBuilder('user')
+      // .select('name', 'name')
       // .select('sum(user.age)', 'sum')
       // .where('user.id = :id', { id: 1 })
+      // .leftJoinAndSelect(User, 'u', '')
 
       // .setLock('pessimistic_read')
 
-      // .getRawOne(); // 获取原始结果
-      .getRawMany();
+      // .getRawOne(); // 获取原始结果（比如count(*),内左右连接的数据）
+      .getMany();
 
     // .stream(); // 流结果数据
+
+    console.log(res);
+    return res;
   }
 
   // 查询测试
-  c(data) {
-    return this.userRepo.createQueryBuilder('user')
-      .select(['user.*'])
-      // .leftJoinAndSelect('')
+  async c(data) {
+
+    // const userQb = await this.userRepo.createQueryBuilder('user')
+    //   .select('count(*)', 'reffer_num')
+    //   .from(User, 'user')
+    //   .where('user.refferId = u.id')
+    //   .leftJoinAndSelect(User, 'u', 'users.refferId = u.id');
+
+    // console.log(userQb.getQuery());
+
+    let res = await this.userRepo.createQueryBuilder('users')
+      .select(['users.*', 'u.name referrer_name'])
+      // .addSelect('(count(user.*)', 'num')
+      // .from(User, 'user')
+      // .where('user.refferId = users.id)')
+      // .addSelect(`${userQb.getQuery()}`)
+      // .addSelect('(count(*) user where user.refferId = users.id)', 'reffer_num')
+      .leftJoinAndSelect(User, 'u', 'users.refferId = u.id')
+
+      // .skip(0)
+      // .take(2)
+      // .offset(0)
+      // .limit(3)
       .getRawMany();
     // .getMany();
     // .getSql();
+
+    removeRawMany(res, 'u_');
+
+    return res;
   }
 
   async d(data) {
@@ -108,6 +137,88 @@ export class UserService {
     //       .where('user.name = :name', { name: 'user' })
     //   }, 'user')
     //   .getRawMany();
+  }
+
+  e(data) {
+    return this.userRepo.find();
+  }
+
+  async f(data) {
+
+    // console.log(this.userRepo.hasId(data))
+    // console.log(this.userRepo.getId(data))
+
+    // return this.userRepo.query('select * from user');
+
+    // const user = this.userRepo.create(UserDto, {
+    //   id: 1,
+    //   name: 'xxx',
+    //   age: 20,
+    //   department_id: 20,
+    //   refferId: 2
+    // });
+    // return user;
+
+    // let user = new User();
+    // let userData: any = {};
+    // userData.name = 'xx';
+    // userData.age = 20;
+    // userData.department_id = 20;
+    // userData.refferId = 2;
+    // let user = this.userRepo.create(userData);
+    // return this.userRepo.save(user);
+
+    // const user = new User();
+    // let merge = this.userRepo.merge(user, { name: 'yyy', age: 30, department_id: 30, refferId: 3 });
+    // console.log(merge);
+    // return this.userRepo.save(merge);
+
+    // const userData = {
+    //   name: 'yyy',
+    //   age: 30,
+    //   department_id: 30,
+    //   refferId: 3
+    // }
+    // const user = this.userRepo.preload(userData);
+    // console.log(user);
+    // return user;
+
+
+    data = {
+      id: 12,
+      name: 'uu',
+      age: 77,
+      department_id: 40,
+      // refferId: 3
+    }
+    let data1: any = {
+      id: 8,
+      name: 'k',
+      age: 45,
+      department_id: 55,
+      // refferId: 4
+    }
+    // let user = new User();
+    let user = this.userRepo.create(data);
+    let user1 = this.userRepo.create(data1);
+
+
+    // return await this.userRepo.save(user);
+    // return await this.userRepo.save([data, data1]);
+
+    // return await this.userRepo.insert(user);
+    // return await this.userRepo.insert([data, data1]);
+
+    // return await this.userRepo.remove([data, data1])
+    // return await this.userRepo.delete({ name: 'xx' })
+
+    // return await this.userRepo.count({ name: 'sdusdu' })
+
+    // await this.userRepo.increment(data, 'sex', 1);
+    // console.log(data);
+    return await this.userRepo.findByIds([1, 2, 3]);
+
+
 
   }
 

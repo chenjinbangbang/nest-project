@@ -47,6 +47,18 @@ export class UserController {
     return await this.userService.d(body);
   }
 
+  @Post('e')
+  @ApiBody({ type: UserA })
+  async e(@Body() body: UserA) {
+    return await this.userService.e(body);
+  }
+
+  @Post('f')
+  @ApiBody({ type: UserA })
+  async f(@Body() body: UserA) {
+    return await this.userService.f(body);
+  }
+
   // @Post()
   // async create(@Body() body: UserDto) {
   //   await this.userService.create(body);
