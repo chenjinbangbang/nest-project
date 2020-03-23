@@ -87,8 +87,8 @@ export class UserService {
 
       // .skip(0)
       // .take(2)
-      // .offset(0)
-      // .limit(3)
+      .offset(0)
+      .limit(3)
       .getRawMany();
     // .getMany();
     // .getSql();
