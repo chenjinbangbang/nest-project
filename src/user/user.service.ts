@@ -185,17 +185,21 @@ export class UserService {
 
 
     data = {
-      id: 12,
       name: 'uu',
       age: 77,
       department_id: 40,
+      names: ['alex', ',sasa'],
+      profile: {
+        name: 'John',
+        nickname: 'kovich'
+      }
       // refferId: 3
     }
     let data1: any = {
-      id: 8,
       name: 'k',
       age: 45,
       department_id: 55,
+      names: ['alex', 'sasa']
       // refferId: 4
     }
     // let user = new User();
@@ -203,7 +207,7 @@ export class UserService {
     let user1 = this.userRepo.create(data1);
 
 
-    // return await this.userRepo.save(user);
+    return await this.userRepo.save(user);
     // return await this.userRepo.save([data, data1]);
 
     // return await this.userRepo.insert(user);
@@ -216,7 +220,7 @@ export class UserService {
 
     // await this.userRepo.increment(data, 'sex', 1);
     // console.log(data);
-    return await this.userRepo.findByIds([1, 2, 3]);
+    // return await this.userRepo.findByIds([1, 2, 3]);
 
 
 

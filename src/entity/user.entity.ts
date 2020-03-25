@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Generated } from 'typeorm';
 import { Photo } from './photo.entity';
+
+enum UserRole {
+  ADMIN = 'admin',
+  EDITOR = 'editor',
+  GHOST = 'ghost'
+}
+type UserRoleType = 'admin' | 'editor' | 'ghost';
 
 @Entity()
 export class User {
@@ -24,5 +31,49 @@ export class User {
 
   // @Column()
   profilePhoto: Photo; // 映射
+
+  // enum列类型
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.GHOST
+  })
+  role: UserRole
+
+  // 使用带有枚举值的数组
+  @Column({
+    type: 'enum',
+    enum: ['admin', 'editor', 'ghost'],
+    default: 'ghost'
+  })
+  roleType: UserRoleType;
+
+  // set列类型
+  @Column({
+    type: 'set',
+    enum: UserRole,
+    default: [UserRole.GHOST, UserRole.EDITOR]
+  })
+  roles: UserRole[];
+
+  @Column({
+    type: 'set',
+    enum: ['admin', 'editor', 'ghost'],
+    default: ['ghost', 'editor']
+  })
+  rolesType: UserRoleType[]
+
+  // simple-array列类型
+  @Column('simple-array')
+  names: string[];
+
+  // simple-json列类型
+  @Column('simple-json')
+  profile: { name: string, nickname: string };
+
+  // @Generated
+  @Column()
+  @Generated('uuid')
+  uuid: string;
 
 }
