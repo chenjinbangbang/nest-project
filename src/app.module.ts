@@ -12,12 +12,14 @@ import { APP_PIPE, APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
+import { InfoModule } from './info/info.module';
 
 // 连接mysql数据库
 import { TypeOrmModule } from '@nestjs/typeorm'; // 使用TypeORM是因为它是TypeScript中最成熟的对象关系映射器（ORM）
 import { Connection } from 'typeorm';
 import { HttpExceptionFilter } from './http-exception.filter';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 // @Module()装饰器：将元数据附加到模块类
 @Module({
@@ -36,7 +38,7 @@ import { HttpExceptionFilter } from './http-exception.filter';
         synchronize: true // 定义数据库表结构与实体类字段同步（这里一旦数据库少了字段就会自动加入，根据需要来使用）
       }
     ),
-    CatsModule, UserModule, AuthModule], // 导入模块的列表，这些模块导出了此模块中所需提供者
+    CatsModule, UserModule, InfoModule, AuthModule, UsersModule], // 导入模块的列表，这些模块导出了此模块中所需提供者
   controllers: [AppController], // 必须创建的一组控制器
 
   // 由nest注入器实例化的提供者，并且可以至少在整个模块中共享

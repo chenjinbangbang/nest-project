@@ -1,15 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { UsersModule } from '../users/users.module';
 
-import { Auth } from 'src/entity/auth.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './local.strategy';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Auth])], // 注册实体类
-  controllers: [AuthController],
-  providers: [AuthService]
+  imports: [UsersModule, PassportModule],
+  providers: [AuthService, LocalStrategy]
 })
-export class AuthModule {
-
-}
+export class AuthModule { }

@@ -5,7 +5,7 @@
 import { IsString, IsInt, IsBoolean, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger'; // @ApiProperty()装饰器：对其进行注释，允许设计不同模式对象属性
 
-export class AuthDto {
+export class InfoDto {
 
   @ApiProperty({
     // type: Number,

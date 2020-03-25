@@ -1,9 +1,8 @@
 // 存储库模式：TypeORM支持存储库设计模式，因此每个实体都有自己的存储库。可以从数据库连接获得这些存储库。（会自动影响到mysql数据库的数据，所以不用手动操作mysql数据库）
 import { PrimaryGeneratedColumn, Column, Entity, BaseEntity, JoinColumn, OneToMany } from 'typeorm';
-import { Comment } from './comment.entity';
 
 @Entity()
-export class Auth extends BaseEntity { // 实体类要与字段数据库表一一对应，如数据库表名称为auth（一定要用auth，不能使用authEntity，否则不生效）
+export class Info extends BaseEntity { // 实体类要与字段数据库表一一对应，如数据库表名称为info（一定要用info，不能使用infoEntity，否则不生效）
   @PrimaryGeneratedColumn() // 主键装饰器
   id: number;
 
@@ -24,8 +23,4 @@ export class Auth extends BaseEntity { // 实体类要与字段数据库表一�
 
   @Column('varchar')
   username: string;
-
-  @OneToMany(type => Comment, comment => comment.auth) // 一个User对应多个Comment
-  @JoinColumn()
-  comments?: Comment[];
 }
