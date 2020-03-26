@@ -11,8 +11,8 @@ export class UsersService {
     this.users = [
       {
         userId: 1,
-        username: 'john',
-        password: 'changeme'
+        username: 'jin',
+        password: 'jin'
       },
       {
         userId: 2,

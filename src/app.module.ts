@@ -9,7 +9,7 @@ import { CatsController } from './cats/cats.controller';
 // import { CatsService } from './cats/cats.service';
 import { CatsModule } from './cats/cats.module';
 import { APP_PIPE, APP_GUARD, APP_FILTER } from '@nestjs/core';
-import { RolesGuard } from './roles.guard';
+// import { RolesGuard } from './roles.guard';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
 import { InfoModule } from './info/info.module';
@@ -52,10 +52,10 @@ import { UsersModule } from './users/users.module';
     },
 
     // 在依赖注入方面，从任何模块外部注册的全局守卫不能插入依赖项，因为它们不属于任何模块。为了解决这个问题，可以使用以下构造直接从任何模块设置一个守卫
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard
+    // },
 
     // 全局过滤器用于整个应用程序、每个控制器和每个路由处理程序。就依赖注入而言，从任何模块外部注册的全局过滤器（使用上面示例中的 useGlobalFilters()）不能注入依赖，因为它们不属于任何模块。为了解决这个问题，你可以注册一个全局范围的过滤器直接为任何模块设置过滤器：
     {
