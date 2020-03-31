@@ -8,6 +8,7 @@ import { Photo } from 'src/entity/photo.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([User, Photo])],
   controllers: [UserController],
-  providers: [UserService]
+  providers: [UserService],
+  // exports: [UserService]
 })
 export class UserModule { }

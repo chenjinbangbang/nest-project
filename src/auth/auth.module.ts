@@ -13,10 +13,11 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
   imports: [
     UsersModule,
-    PassportModule,
+    // PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }), // 确定默认策略行为
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' }
+      signOptions: { expiresIn: jwtConstants.expiresIn }
     })
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],

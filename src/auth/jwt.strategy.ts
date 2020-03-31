@@ -13,9 +13,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  // 对于JWT策略，Passport首先验证JWT的签名并解码JSON。然后调用我们的validate()方法，该方法将解码后的JSON作为其单个参数传递
+  // 对于JWT策略，Passport首先验证JWT的签名并解码JSON。然后调用我们的validate()方法，该方法将解码后的JSON作为其单个参数传递（获取token里面的用户信息，用于返回用户信息）
   async validate(payload: any) {
-    console.log('payload', payload);
-    return { userId: payload.sub, username: payload.username };
+    console.log('用户信息：', payload);
+    return { id: payload.sub, username: payload.username };
+    // let { iat, exp, ...result } = payload;
+    // return result;
   }
 }
