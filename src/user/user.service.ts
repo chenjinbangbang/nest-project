@@ -4,6 +4,7 @@ import { User } from 'src/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getManager } from 'typeorm';
 import { Photo } from 'src/entity/photo.entity';
+import { Log } from 'src/entity/log.entity';
 import { removeRawMany } from 'src/common/global';
 
 // 业务类
@@ -13,7 +14,9 @@ export class UserService {
   // private readonly users: User[] = [];
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
-    @InjectRepository(Photo) private readonly photoRepo: Repository<Photo>) { }
+    @InjectRepository(Photo) private readonly photoRepo: Repository<Photo>,
+    @InjectRepository(Log) private readonly logRepo: Repository<Log>
+  ) { }
 
   // create(user: User) {
   //   this.users.push(user);
@@ -140,7 +143,16 @@ export class UserService {
   }
 
   e(data) {
-    return this.userRepo.find();
+    // return this.userRepo.find();
+    // return this.userRepo.find({ relations: ['logs'] });
+
+    return this.userRepo.createQueryBuilder('user')
+      .select('user.id')
+      // .leftJoinAndSelect(Log, 'log', 'log.userId = user.id')
+      .leftJoinAndSelect('user.logs', 'log')
+      // .getRawMany();
+      .getMany();
+
   }
 
   async f(data) {
@@ -221,8 +233,26 @@ export class UserService {
     // await this.userRepo.increment(data, 'sex', 1);
     // console.log(data);
     // return await this.userRepo.findByIds([1, 2, 3]);
+  }
 
+  // 添加一条日志
+  async createLog() {
+    let id = 4;
 
+    // 先查询当前用户存在哪些logs，然后累加到user.logs中
+    let currentUser = await this.userRepo.findOne(id, { relations: ['logs'] });
+    // console.log(currentUser);
+
+    let log = new Log();
+    log.detail = '退款5';
+    await this.logRepo.save(log);
+
+    // console.log(log)
+
+    let user = new User();
+    user.id = id;
+    user.logs = [...currentUser.logs, log];
+    return await this.userRepo.save(user);
 
   }
 
