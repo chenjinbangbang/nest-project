@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Generated } from 'typeorm';
 import { Photo } from './photo.entity';
+import { Log } from './log.entity';
 
 enum UserRole {
   ADMIN = 'admin',
@@ -34,6 +35,10 @@ export class User {
   // 一个用户有多张图片
   @OneToMany(type => Photo, photo => photo.user)
   photos: Photo[];
+
+  // 一个用户有多个日志
+  @OneToMany(type => Log, log => log.user)
+  logs: Log[];
 
   // @Column()
   profilePhoto: Photo; // 映射
