@@ -22,6 +22,10 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { LogModule } from './log/log.module';
 
+// 任务调度
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from './tasks/tasks.service';
+
 // @Module()装饰器：将元数据附加到模块类
 @Module({
   imports: [
@@ -39,6 +43,7 @@ import { LogModule } from './log/log.module';
         synchronize: true // 定义数据库表结构与实体类字段同步（这里一旦数据库少了字段就会自动加入，根据需要来使用）
       }
     ),
+    ScheduleModule.forRoot(),
     CatsModule, UserModule, InfoModule, AuthModule, UsersModule, LogModule], // 导入模块的列表，这些模块导出了此模块中所需提供者
   controllers: [AppController], // 必须创建的一组控制器
 
@@ -62,7 +67,9 @@ import { LogModule } from './log/log.module';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter
-    }
+    },
+
+    TasksService
   ],
 
   // exports: [] // 由本模块提供并应在其他模块中可用的提供者的子集（service作为共享模块，一旦创建就能被任意模块重复使用）

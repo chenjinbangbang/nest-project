@@ -4,7 +4,10 @@ import { ApiQuery, ApiHeader, ApiConsumes, ApiBody, ApiProperty } from '@nestjs/
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor, FilesInterceptor, FileFieldsInterceptor, MulterModule } from '@nestjs/platform-express';
 
-// MulterModule.register({ dest: '/public' })
+import fs = require('fs');
+import crypto = require('crypto');
+
+// MulterModule.register({ dest: '/uploads' })
 // MulterModule.registerAsync({
 //   useFactory: () => ({
 //     dest: '/public'
@@ -12,26 +15,16 @@ import { FileInterceptor, FilesInterceptor, FileFieldsInterceptor, MulterModule 
 // })
 
 // 上传图片
-// import multer from 'multer';
-// // const iconv = require('iconv-lite'); // 解决上传文件名中文乱码问题（暂时无法解决）
-// // const fs = require('fs')
-// const imgSrc = 'uploads_backup'; // 文件路径，在public文件夹下
+import multer = require('multer');
 // // const upload = multer({dest: 'public/uploads'})
-// const storage = multer.diskStorage({
-//   destination(req, file, cb) {
-//     cb(null, `public/${imgSrc}`);
-//   },
-//   filename(req, file, cb) {
-//     console.log(file);
-
-//     // let fileStr = fs.readFileSync(`public/${imgSrc}`, { encoding: 'binary' });
-//     // let buf = new Buffer(fileStr, 'binary');
-//     // let str = iconv.decode(buf, 'utf8');
-//     // console.log(str);
-
-//     cb(null, `${Date.now()}_${file.originalname}`);
-//   }
-// });
+const storage = multer.diskStorage({
+  destination(req: any, file: any, cb: (arg0: any, arg1: string) => void) {
+    cb(null, `uploads`);
+  },
+  filename(req: any, file: { originalname: any; }, cb: (arg0: any, arg1: string) => void) {
+    cb(null, `${Date.now()}_${file.originalname}`);
+  }
+});
 // const upload = multer({
 //   storage
 // })
@@ -98,7 +91,14 @@ class FileUploadDtoMultiParams {
 // })
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {
+    // console.log(11)
+
+    // 加密hash
+    const secret = '123456';
+    const hash = crypto.createHmac('sha256', secret).update('I love cupcakes').digest('hex');
+    console.log(hash);
+  }
 
   // 获取用户信息
   // @UseGuards(AuthGuard('jwt'))
@@ -116,16 +116,7 @@ export class UsersController {
 
   // 上传单个文件
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: {
-      destination: (req, file, cb) => {
-        cb(null, `public/`);
-      },
-      filename: (req, file, cb) => {
-        cb(null, `${Date.now()}_${file.originalname}`);
-      }
-    }
-  }))
+  @UseInterceptors(FileInterceptor('file', { storage }))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     type: FileUploadDto,
@@ -139,7 +130,7 @@ export class UsersController {
 
   // 上传多个文件
   @Post('uploadMulti')
-  @UseInterceptors(FilesInterceptor('files', 2))
+  @UseInterceptors(FilesInterceptor('files', 2, { storage }))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     type: FileUploadDtoMulti,
@@ -172,7 +163,7 @@ export class UsersController {
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'avatar', maxCount: 1 },
     { name: 'background', maxCount: 1 }
-  ]))
+  ], { storage }))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     type: FileUploadDtoMultiParams,
@@ -181,6 +172,25 @@ export class UsersController {
   uploadFileMultiParams(@UploadedFiles() files) {
     console.log(files);
     return '上传成功';
+  }
+
+  // 删除文件
+  @Post('deleteFile')
+  deleteFile() {
+    // let err: any = fs.unlinkSync('uploads/1585925670268_小汽车增量指标确认通知书.pdf'); // 删除文件，不能删除目录
+    // if (err) throw err;
+    // console.log('删除成功');
+
+    // let err: any = fs.rmdirSync('uploads/', { recursive: true }) // 删除目录，不能删除文件
+    // if (err) throw err;
+    // console.log('删除成功');
+
+    // 移动文件（目标文件夹public必须存在，否则失败）
+    fs.rename('uploads/1585925607280_1.png', 'public/1585925607280_1.png', (err) => {
+      if (err) throw err;
+      console.log('移动文件成功');
+    });
+
   }
 }
 
