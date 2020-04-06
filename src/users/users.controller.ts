@@ -19,7 +19,7 @@ import multer = require('multer');
 // // const upload = multer({dest: 'public/uploads'})
 const storage = multer.diskStorage({
   destination(req: any, file: any, cb: (arg0: any, arg1: string) => void) {
-    cb(null, `uploads`);
+    cb(null, `uploads`); // uploads文件夹比如存在，否则会报500，上传失败
   },
   filename(req: any, file: { originalname: any; }, cb: (arg0: any, arg1: string) => void) {
     cb(null, `${Date.now()}_${file.originalname}`);

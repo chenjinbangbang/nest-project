@@ -27,10 +27,10 @@ export class AuthService {
 
   // 登录方法，在app.controller.ts执行，把需要的用户信息存到token里面
   async login(user: any) {
-    const payload = { username: user.username, sub: user.id }; //sub属性：保持我们的id值域JWT标准一致，
+    const payload = { username: user.username, sub: user.id }; // sub属性：保持我们的id值域JWT标准一致
     console.log('token信息：', payload)
     return {
-      access_token: this.jwtService.sign(payload), //sign()函数：用于从用户对象属性的子集生产jwt
+      access_token: this.jwtService.sign(payload), // sign()函数：用于从用户对象属性的子集生产jwt
       expiresIn: jwtConstants.expiresIn * 1000
     }
   }

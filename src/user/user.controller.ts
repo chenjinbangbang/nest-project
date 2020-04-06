@@ -23,7 +23,7 @@ export class UserController {
   // @Inject()
   // private readonly userService: UserService;
 
-  @Post()
+  @Post('a')
   @ApiBody({ type: UserA })
   async a(@Body() body: UserA) {
     return await this.userService.a(body);

@@ -30,6 +30,7 @@ export class UserService {
   a(data) {
     return this.userRepo.createQueryBuilder('user')
       // .leftJoinAndSelect('user.photos', 'photo')
+      .leftJoinAndSelect('user.logs', 'log')
       // .innerJoinAndSelect('user.photos', 'photo')
 
       // .leftJoin('user.photos', 'photo') // 不加选择加入，不返回photos
@@ -39,15 +40,16 @@ export class UserService {
       // .innerJoinAndSelect('photos', 'photo', 'photo.userId = user.id')
 
       // .leftJoinAndMapOne('user.profilePhoto', 'user.photos', 'photo') // 连接和映射功能（就是photos改名为profilePhoto）
-      .leftJoinAndMapMany('user.profilePhoto', 'user.photos', 'photo')
+      // .leftJoinAndMapMany('user.profilePhoto', 'user.photos', 'photo')
 
       // .where('user.name = :name', data)
       // .getOne();
       // .getMany(); // 不能查询到*，原始数据（sum(*)）
       // .getSql(); // 获取生成的查询
 
-      .printSql() // 该查询将返回用户，并将使用的sql语句打印到控制台
+      // .printSql() // 该查询将返回用户，并将使用的sql语句打印到控制台
       .getMany();
+    // .getRawMany();
   }
 
   async b(data) {
