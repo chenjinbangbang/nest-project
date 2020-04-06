@@ -1,7 +1,10 @@
 import { Module, NestModule, MiddlewareConsumer, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+// 中间件
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { InitMiddleware } from './middleware/init.middleware';
 // import { logger } from './common/middleware/logger.middleware';
 
 // CatsController和CatsService属于同一个应用程序域，应该考虑将它们移动到一个功能模块下，即CatsModule
@@ -25,6 +28,7 @@ import { LogModule } from './log/log.module';
 // 任务调度
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './tasks/tasks.service';
+
 
 // @Module()装饰器：将元数据附加到模块类
 @Module({
@@ -83,9 +87,14 @@ export class AppModule implements NestModule {
     consumer
       .apply(LoggerMiddleware) // apply()方法可以使用单个中间件，也可以使用多个参数来指定多个中间件，多个中间件用逗号隔开
       // .exclude({ path: 'cats', method: RequestMethod.GET }) // exclude()方法：将某些路由排除在中间件应用之外，该方法采用一个或多个对象标识要排除的path和method
+      // .forRoutes('*') // 匹配所有路由
       .forRoutes('user')
-    // .forRoutes({ path: 'cats' method: RequestMethod.GET }); // 设置路由路径的对象和请求方法（注意：GET请求对动态路由无效）
-    // .forRoutes(CatsController) // forRoutes()方法可接受一个字符串，多个字符串，对象，一个控制器类甚至多个控制器类
+      // .forRoutes({ path: 'cats' method: RequestMethod.GET }); // 设置路由路径的对象和请求方法（注意：GET请求对动态路由无效）
+      // .forRoutes({ path; 'cats', method: RequestMethod.ALL }, { path: 'user', method: RequestMethod.ALL }) // 匹配多个路由
+      // .forRoutes(CatsController) // forRoutes()方法可接受一个字符串，多个字符串，对象，一个控制器类甚至多个控制器类
 
+      // 不同中间件匹配不同的路由（使用链式调用）
+      .apply(InitMiddleware)
+      .forRoutes('cats')
   }
 }

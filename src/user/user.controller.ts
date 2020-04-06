@@ -1,10 +1,35 @@
-import { Controller, Post, Body, Header, Headers, Head, Param, Delete, HttpCode, Get, Optional, Inject } from '@nestjs/common';
+import { Controller, Post, Body, Header, Headers, Head, Param, Delete, HttpCode, Get, Optional, Inject, Query, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto'; // 请求体绑定
 import { Observable, of } from 'rxjs';
 import { User } from 'src/entity/user.entity';
-import { ApiTags, ApiResponse, ApiBody, ApiProperty, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { ApiTags, ApiResponse, ApiBody, ApiProperty, ApiParam, ApiQuery, ApiOperation } from '@nestjs/swagger';
+import { IsString, IsInt, Min, Max } from 'class-validator';
+import { UserPipe } from 'src/pipe/user.pipe';
+
+// 设置Joi的schema
+import * as Joi from '@hapi/joi';
+let userSchema = Joi.object().keys({
+  name: Joi.string().required(),
+  age: Joi.number().integer().min(6).max(66).required()
+})
+
+class userSchemaDto {
+  @ApiProperty({
+    description: '姓名'
+  })
+  @IsString()
+  readonly name: string;
+
+  @ApiProperty({
+    description: '年龄',
+    default: 1
+  })
+  // @IsInt()
+  // @Min(6)
+  // @Max(66)
+  readonly age: number;
+}
 
 class UserA {
   @ApiProperty({
@@ -15,6 +40,7 @@ class UserA {
 }
 
 // 用户控制器
+@ApiTags('用户相关')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { } // 注入UserService
@@ -57,6 +83,25 @@ export class UserController {
   @ApiBody({ type: UserA })
   async f(@Body() body: UserA) {
     return await this.userService.f(body);
+  }
+
+  @Get('pipe')
+  @ApiOperation({ summary: '管道接口' })
+  // @ApiQuery({ name: 'name' }) // 有userSchemaDto实体的话，可不用
+  // @ApiQuery({ name: 'age' })
+  @UsePipes(new UserPipe(userSchema)) // 绑定管道
+  pipe(@Query() query: userSchemaDto) {
+    // console.log(query);
+    return query;
+  }
+
+  @Post('pipe')
+  @ApiOperation({ summary: '管道接口' })
+  @UsePipes(new UserPipe(userSchema))
+  // @ApiBody({ type: userSchemaDto }) // 有userSchemaDto实体的话，等价于这个
+  pipePost(@Body() body: userSchemaDto) {
+    // console.log(query);
+    return body;
   }
 
   // @Post()
