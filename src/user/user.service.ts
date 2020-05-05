@@ -3,8 +3,8 @@ import { Injectable, Scope } from '@nestjs/common';
 import { User } from 'src/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getManager } from 'typeorm';
-import { Photo } from 'src/entity/photo.entity';
-import { Log } from 'src/entity/log.entity';
+// import { Photo } from 'src/entity/photo.entity';
+// import { Log } from 'src/entity/log.entity';
 import { removeRawMany } from 'src/common/global';
 
 // 业务类
@@ -14,8 +14,8 @@ export class UserService {
   // private readonly users: User[] = [];
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
-    @InjectRepository(Photo) private readonly photoRepo: Repository<Photo>,
-    @InjectRepository(Log) private readonly logRepo: Repository<Log>
+    // @InjectRepository(Photo) private readonly photoRepo: Repository<Photo>,
+    // @InjectRepository(Log) private readonly logRepo: Repository<Log>
   ) { }
 
   // create(user: User) {
@@ -29,7 +29,7 @@ export class UserService {
 
   a(data) {
     return this.userRepo.createQueryBuilder('user')
-      // .leftJoinAndSelect('user.photos', 'photo')
+      .leftJoinAndSelect('user.photos', 'photo')
       .leftJoinAndSelect('user.logs', 'log')
       // .innerJoinAndSelect('user.photos', 'photo')
 
@@ -239,22 +239,22 @@ export class UserService {
 
   // 添加一条日志
   async createLog() {
-    let id = 4;
+    // let id = 4;
 
-    // 先查询当前用户存在哪些logs，然后累加到user.logs中
-    let currentUser = await this.userRepo.findOne(id, { relations: ['logs'] });
-    // console.log(currentUser);
+    // // 先查询当前用户存在哪些logs，然后累加到user.logs中
+    // let currentUser = await this.userRepo.findOne(id, { relations: ['logs'] });
+    // // console.log(currentUser);
 
-    let log = new Log();
-    log.detail = '退款5';
-    await this.logRepo.save(log);
+    // let log = new Log();
+    // log.detail = '退款5';
+    // await this.logRepo.save(log);
 
-    // console.log(log)
+    // // console.log(log)
 
-    let user = new User();
-    user.id = id;
-    user.logs = [...currentUser.logs, log];
-    return await this.userRepo.save(user);
+    // let user = new User();
+    // user.id = id;
+    // user.logs = [...currentUser.logs, log];
+    // return await this.userRepo.save(user);
 
   }
 

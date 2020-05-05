@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Header, Headers, Head, Param, Delete, HttpCode, Get, Optional, Inject, Query, UsePipes } from '@nestjs/common';
+import { Controller, Post, Body, Header, Headers, Head, Param, Delete, HttpCode, Get, Optional, Inject, Query, UsePipes, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto'; // 请求体绑定
 import { Observable, of } from 'rxjs';
@@ -6,6 +6,9 @@ import { User } from 'src/entity/user.entity';
 import { ApiTags, ApiResponse, ApiBody, ApiProperty, ApiParam, ApiQuery, ApiOperation } from '@nestjs/swagger';
 import { IsString, IsInt, Min, Max } from 'class-validator';
 import { UserPipe } from 'src/pipe/user.pipe';
+
+// 守卫
+import { AuthGuard } from 'src/guard/auth.guard';
 
 // 设置Joi的schema
 import * as Joi from '@hapi/joi';
@@ -42,6 +45,7 @@ class UserA {
 // 用户控制器
 @ApiTags('用户相关')
 @Controller('user')
+// @UseGuards(AuthGuard) // 配置守卫
 export class UserController {
   constructor(private readonly userService: UserService) { } // 注入UserService
 
